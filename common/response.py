@@ -1,40 +1,22 @@
 from fastapi import HTTPException
 
-def success(data=None,massage='No massage'):
+def success(data=None,message='No message'):
     return {
         "success": True,
-        "massage": massage,
+        "message": message,
         "data": data,
     }
     
-def error(status_code=401,data=None,massage='No massage'):
+def error(status_code=401,data=None,message='No message'):
     return HTTPException(
         status_code=status_code,
         detail={
             "success": False,
-            "massage": massage,
+            "message": message,
             "data": data,
         }
     )
 
-def not_found_error(status_code=404,data=None,massage='data tidak di temukan'):
-    return HTTPException(
-        status_code=status_code,
-        detail={
-            "success": False,
-            "massage": massage,
-            "data": data,
-        }
-    )
-def forbidden_error(status_code=403,data=None,massage='Forbidden'):
-    return HTTPException(
-        status_code=status_code,
-        detail={
-            "success": False,
-            "massage": massage,
-            "data": data,
-        }
-    )
 
 
 

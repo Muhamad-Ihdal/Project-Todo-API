@@ -6,6 +6,25 @@ def foreign_key_on():
     conn.row_factory = sqlite3.Row
     return conn
 
+def delete_table():
+    conn = foreign_key_on() 
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    DROP TABLE IF EXISTS users;
+    """)
+    cursor.execute("""
+    DROP TABLE IF EXISTS ref_token;
+    """)
+    cursor.execute("""
+    DROP TABLE IF EXISTS todos;
+    """)
+
+    
+    conn.commit()
+    conn.close()
+
+
 def create_table_users():
     conn = foreign_key_on()
     cursor = conn.cursor()
@@ -30,7 +49,7 @@ def create_table_todo():
     cursor = conn.cursor()
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS todo (
+        CREATE TABLE IF NOT EXISTS todos (
             id INTEGER PRIMARY KEY,
             title TEXT,
             description TEXT,
@@ -38,7 +57,7 @@ def create_table_todo():
             created_at TEXT NOT NULL,
             update_at TEXT NOT NULL,
             deleted_at TEXT DEFAULT null,
-            owner_id INTEGER NOT NULL
+            owner_id INTEGER NOT NULL, 
             FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
             )""")
 
@@ -57,7 +76,7 @@ def create_table_refresh_token():
             token TEXT NOT NULL,
             revoked_at EXT DEFAULT null,
             expired_at TEXT NOT NULL,
-            user_id INTEGER NOT NULL
+            user_id INTEGER NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )""")
 

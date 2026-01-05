@@ -1,10 +1,9 @@
 from passlib.context import CryptContext
 from jose import jwt,JWTError,ExpiredSignatureError
-from fastapi.security import OAuth2PasswordBearer
 from config import SECRET_KEY,ALGORITHM,ACCESS_TOKEN_EXPIRED_IN_MINUTES,REFRESH_TOKEN_EXPIRED_IN_DAYS
 from datetime import datetime,timedelta,timezone
-
-
+from ..common.response import success,error,not_found_error,forbidden_error
+# from .. import common
 # ----------------------------------hash 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -41,5 +40,5 @@ def verify_token(token:str):
     try:
         return jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
     except JWTError:
-        pass
+        error(status_code=401,message="token invalid")
 # ------------------------------------ jwt end 
