@@ -5,11 +5,15 @@ router = APIRouter()
 
 @router.post("/auth/register")
 def register(user : RegisterRequest):
-    return register_service(user)
+    email = user.email
+    password = user.password
+    return register_service(email,password)
 
 @router.post("/auth/login")
 def login(user : LoginRequest):
-    return login_service(user)
+    email = user.email
+    password = user.password
+    return login_service(email,password)
 
 @router.post("/auth/refresh")
 def refresh_token(token : RefreshRequest):

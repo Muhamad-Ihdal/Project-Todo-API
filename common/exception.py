@@ -19,3 +19,7 @@ class PermissionDenail(AppError):
 class DatabaseError(AppError):
     status_code = 503
     detail = "Data base error"
+
+class UniqueError(AppError):
+    status_code = 400
+    detail = "Email telah digunakan"

@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from jose import jwt,JWTError,ExpiredSignatureError
 from config import SECRET_KEY,ALGORITHM,ACCESS_TOKEN_EXPIRED_IN_MINUTES,REFRESH_TOKEN_EXPIRED_IN_DAYS
 from datetime import datetime,timedelta,timezone
-from ..common.response import success,error
+from common.response import success,error
 # from .. import common
 # ----------------------------------hash 
 pwd_context = CryptContext(

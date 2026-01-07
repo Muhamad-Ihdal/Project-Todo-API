@@ -1,9 +1,9 @@
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from security import verify_password,verify_token
-from ..common.response import success,error
-from ..db.models import get_user_by_id
-from ..common.exception import UserNotFoudError
+from common.response import success,error
+from db.models import get_user_by_id
+from common.exception import UserNotFoudError
 
 
 oauth2_sheme = OAuth2PasswordBearer(tokenUrl="login")

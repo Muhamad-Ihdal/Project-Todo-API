@@ -76,8 +76,8 @@ def create_table_refresh_token():
             token TEXT NOT NULL,
             revoked_at EXT DEFAULT null,
             expired_at TEXT NOT NULL,
-            user_id INTEGER NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            owner_id INTEGER NOT NULL,
+            FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
             )""")
 
     conn.commit()
