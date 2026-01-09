@@ -78,4 +78,6 @@ def refresh_token_service(token):
 
 
 def logout_service(token):
-    pass
+    result =  delete_refresh_token_db(token=token)
+    return success(message="berhasil logout")
+
