@@ -4,6 +4,7 @@ from ..common.time import now
 from ..common.response import *
 from ..common.exception import *
 from datetime import datetime,timedelta,timezone
+from utils import get_user_by_email_utils, get_user_by_id_utils
 # belajar init dan moduls duluuu woyyyy <----------------------------------|
 
 def register_service(email,password):
@@ -18,11 +19,7 @@ def register_service(email,password):
 
 
 def login_service(email,password):
-    try:
-        user = get_user_by_email(email=email)
-    except UserNotFoudError:
-        error(status_code=UserNotFoudError.status_code,message="invalid email or password")
-    
+    user = get_user_by_email_utils(email=email)
     if not verify_password(plain_password=password,hashed_password=user["hashed_password"]):
         error(status_code=400,message="invalid email or password")
 
@@ -61,14 +58,7 @@ def refresh_token_service(token):
     payload = verify_token(token=data_token["token"])
     user_id = int(payload["sub"])
     
-    try:
-        user = get_user_by_id(user_id=user_id)
-        if not user["is_active"]:
-            raise PermissionDenail()
-    except UserNotFoudError:
-        error(status_code=404,message="User not found")
-    except PermissionDenail:
-        error(status_code=403,message="User sudah dinonaktifkan")
+    user = get_user_by_id_utils(user_id=user_id)
     
     access_token = create_access_token(user_id=user["id"],email=user["email"],role=user["role"])
     refresh_token = create_refresh_token(user_id=user["id"])
@@ -87,9 +77,5 @@ def refresh_token_service(token):
     return success(data=data_response,message="refresh token berhasil")
 
 
-
-
-
-
-def logout_service():
+def logout_service(token):
     pass

@@ -11,3 +11,9 @@ class LoginRequest(BaseModel):
     
 class RefreshRequest(BaseModel):
     refresh_token:str
+
+class SuccessResponse(BaseModel):
+    success:bool
+    message:str
+    data: dict | list | None = None
+
