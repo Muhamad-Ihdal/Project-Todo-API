@@ -24,9 +24,9 @@ def login_service(email,password):
         if not user["is_active"]:
             raise PermissionDenail()
     except UserNotFoudError:
-        error(status_code=403,message="invalid email or password")
+        error(status_code=UserNotFoudError.status_code,message="invalid email or password")
     except PermissionDenail:
-        error(status_code=402,message="User telah dibaned")
+        error(status_code=PermissionDenail.status_code,message="User telah dibaned")
 
     if not verify_password(plain_password=password,hashed_password=user["password"]):
         error(status_code=400,message="invalid email or password")

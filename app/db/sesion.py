@@ -31,8 +31,8 @@ def create_table_users():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIPARY KEY,
-            email TEXT UNIQUE,
+            id INTEGER PRIMARY KEY,
+            email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'user',
             is_active INTEGER NOT NULL DEFAULT 1,
@@ -55,7 +55,7 @@ def create_table_todo():
             description TEXT,
             status TEXT NOT NULL DEFAULT 'pending',
             created_at TEXT NOT NULL,
-            update_at TEXT NOT NULL,
+            updated_at TEXT,
             deleted_at TEXT DEFAULT null,
             owner_id INTEGER, 
             FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
@@ -74,7 +74,7 @@ def create_table_refresh_token():
         CREATE TABLE IF NOT EXISTS ref_token (
             id INTEGER PRIMARY KEY,
             token TEXT NOT NULL,
-            revoked_at EXT DEFAULT null,
+            revoked_at TEXT DEFAULT null,
             expired_at TEXT NOT NULL,
             owner_id INTEGER,
             FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE

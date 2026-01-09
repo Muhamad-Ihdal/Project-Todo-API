@@ -2,8 +2,6 @@ from .sesion import foreign_key_on
 from ..common.exception import UserNotFoudError,PermissionDenail,UniqueError,DatabaseError
 import sqlite3
 
-
-
 # ----------------------------------------------------------------- user 
 def add_user_db(hashed_pwd,email,created_at):
     conn = foreign_key_on()
@@ -55,14 +53,9 @@ def get_user_by_email(email:str):
 
     conn.close()
     return dict(row)
-
-
 # ----------------------------------------------------------------- user end
 
-
 # ----------------------------------------------------------------- refresh token
-
-
 def add_refresh_token_db(owner_id,token,expired_at):
     conn = foreign_key_on()
     cursor = conn.cursor()
@@ -72,8 +65,8 @@ def add_refresh_token_db(owner_id,token,expired_at):
         (owner_id,token,expired_at)
     )
 
-    affected_row = cursor.rowcount
-    if not affected_row:
+    affected_row = cursor.rowcount #---------------------------------ini masalah nih
+    if not affected_row: 
         conn.close()
         raise DatabaseError()
 
@@ -87,13 +80,13 @@ def check_and_get_token_db(token):
 
     cursor.execute(
         "SELECT * FROM ref_token WHERE token = ?",
-        (token)
+        (token,)
     )
 
     row = cursor.fetchone()
     if not row:
         conn.close()
-        raise FileNotFoundError() #------------------------------ tes ini
+        raise DatabaseError()
 
     conn.close()
     return dict(row)
@@ -109,10 +102,5 @@ def delete_refresh_token_db(token):
 
     conn.commit()
     conn.close()
-
-
-
-
-
 
 # ----------------------------------------------------------------- refresh token end
