@@ -1,4 +1,4 @@
-from db.models import add_user_db,get_user_by_id,get_user_by_email,add_refresh_token_db
+from db.models import delete_refresh_token_db,add_user_db,get_user_by_id,get_user_by_email,add_refresh_token_db,check_and_get_token_db
 from core.security import hash_password,verify_password,create_access_token,create_refresh_token,verify_token
 from ..common.time import now
 from ..common.response import *
@@ -26,7 +26,7 @@ def login_service(email,password):
     if not verify_password(plain_password=password,hashed_password=user["hashed_password"]):
         error(status_code=400,message="invalid email or password")
 
-    access_token = create_access_token(user_id=user["id"],email=user["email"],role=["role"])
+    access_token = create_access_token(user_id=user["id"],email=user["email"],role=user["role"])
     refresh_token = create_refresh_token(user_id=user["id"])
     expierd_at = now() + timedelta(days=7)
     try:
@@ -43,7 +43,53 @@ def login_service(email,password):
         message="login berhasil"
     )
 
-def refresh_token_service():
-    pass
+def refresh_token_service(token):
+    try:
+        data_token = check_and_get_token_db(token=token)
+        delete_refresh_token_db(data_token["token"])
+        if data_token["revoked_at"]:
+            raise PermissionDenail()
+    except FileNotFoundError:
+        error(status_code=404,message="Token tidak terdaftar")
+    except PermissionDenail:
+        error(status_code=401,message="Token telah di band")
+   
+    expired_at = datetime.fromisoformat(data_token["expired_at"])
+    if expired_at < datetime.now(timezone.utc):
+        error(message="Token telah expired")
+    
+    payload = verify_token(token=data_token["token"])
+    user_id = int(payload["sub"])
+    
+    try:
+        user = get_user_by_id(user_id=user_id)
+        if not user["is_active"]:
+            raise PermissionDenail()
+    except UserNotFoudError:
+        error(status_code=404,message="User not found")
+    except PermissionDenail:
+        error(status_code=403,message="User sudah dinonaktifkan")
+    
+    access_token = create_access_token(user_id=user["id"],email=user["email"],role=user["role"])
+    refresh_token = create_refresh_token(user_id=user["id"])
+    expierd_at = now() + timedelta(days=7)
+    try:
+        add_refresh_token_db(owner_id=user["id"],token=refresh_token,expired_at=expierd_at)
+    except DatabaseError:
+        error(status_code=DatabaseError.status_code,message=DatabaseError.detail)
+    
+    data_response,m = {
+        "access_token":access_token,
+        "refresh_token":refresh_token,
+        "type":"Bearer"
+    }
+
+    return success(data=data_response,message="refresh token berhasil")
+
+
+
+
+
+
 def logout_service():
     pass

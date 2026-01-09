@@ -17,7 +17,7 @@ def login(user : LoginRequest):
 
 @router.post("/auth/refresh")
 def refresh_token(token : RefreshRequest):
-    return refresh_token_service(token)
+    return refresh_token_service(token.refresh_token)
 
 @router.post("/auth/logout")
 def logout(token : RefreshRequest):

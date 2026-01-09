@@ -12,6 +12,10 @@ class UserNotFoudError(AppError):
     status_code = 404
     detail = "User tidak di temukan"
 
+# class FileNotFoundError(AppError):
+#     status_code = 404
+#     detail = "User tidak di temukan"
+
 class PermissionDenail(AppError):
     status_code = 403
     detail = "Akses ditolak"
