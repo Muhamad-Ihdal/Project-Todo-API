@@ -1,4 +1,4 @@
-from sesion import foreign_key_on
+from .sesion import foreign_key_on
 from ..common.exception import UserNotFoudError,PermissionDenail,UniqueError,DatabaseError
 import sqlite3
 
@@ -11,7 +11,7 @@ def add_user_db(hashed_pwd,email,created_at):
 
     try:
         cursor.execute(
-            "INSESRT INTO users (email,password,created_at) VALUES (?,?,?)",
+            "INSERT INTO users (email,password,created_at) VALUES (?,?,?)",
             (email,hashed_pwd,created_at)
         )
     except sqlite3.IntegrityError:
@@ -68,7 +68,7 @@ def add_refresh_token_db(owner_id,token,expired_at):
     cursor = conn.cursor()
 
     cursor.execute(
-        "INSESRT INTO users (owner_id,token,expired_at) VALUES (?,?,?)",
+        "INSERT INTO ref_token (owner_id,token,expired_at) VALUES (?,?,?)",
         (owner_id,token,expired_at)
     )
 

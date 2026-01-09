@@ -1,7 +1,7 @@
 import sqlite3
 
 def foreign_key_on():
-    conn = sqlite3.connect("db/todo.db")
+    conn = sqlite3.connect("app/db/todo.db")
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.row_factory = sqlite3.Row
     return conn
@@ -33,7 +33,7 @@ def create_table_users():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIPARY KEY,
             email TEXT UNIQUE,
-            hashed_password TEXT NOT NULL,
+            password TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'user',
             is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL
@@ -57,7 +57,7 @@ def create_table_todo():
             created_at TEXT NOT NULL,
             update_at TEXT NOT NULL,
             deleted_at TEXT DEFAULT null,
-            owner_id INTEGER NOT NULL, 
+            owner_id INTEGER, 
             FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
             )""")
 
@@ -76,7 +76,7 @@ def create_table_refresh_token():
             token TEXT NOT NULL,
             revoked_at EXT DEFAULT null,
             expired_at TEXT NOT NULL,
-            owner_id INTEGER NOT NULL,
+            owner_id INTEGER,
             FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
             )""")
 

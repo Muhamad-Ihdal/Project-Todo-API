@@ -1,10 +1,10 @@
-from db.models import delete_refresh_token_db,add_user_db,get_user_by_id,get_user_by_email,add_refresh_token_db,check_and_get_token_db
-from core.security import hash_password,verify_password,create_access_token,create_refresh_token,verify_token
+from ..db.models import delete_refresh_token_db,add_user_db,get_user_by_id,get_user_by_email,add_refresh_token_db,check_and_get_token_db
+from ..core.security import hash_password,verify_password,create_access_token,create_refresh_token,verify_token
 from ..common.time import now
-from ..common.response import *
-from ..common.exception import *
+from ..common.response import error,success
+from ..common.exception import UserNotFoudError,PermissionDenail,DatabaseError,UniqueError
 from datetime import datetime,timedelta,timezone
-from utils import get_user_by_email_utils, get_user_by_id_utils
+# from .utils import get_user_by_email_utils, get_user_by_id_utils
 # belajar init dan moduls duluuu woyyyy <----------------------------------|
 
 def register_service(email,password):
@@ -19,8 +19,16 @@ def register_service(email,password):
 
 
 def login_service(email,password):
-    user = get_user_by_email_utils(email=email)
-    if not verify_password(plain_password=password,hashed_password=user["hashed_password"]):
+    try:
+        user = get_user_by_email(email=email)
+        if not user["is_active"]:
+            raise PermissionDenail()
+    except UserNotFoudError:
+        error(status_code=403,message="invalid email or password")
+    except PermissionDenail:
+        error(status_code=402,message="User telah dibaned")
+
+    if not verify_password(plain_password=password,hashed_password=user["password"]):
         error(status_code=400,message="invalid email or password")
 
     access_token = create_access_token(user_id=user["id"],email=user["email"],role=user["role"])
@@ -58,7 +66,14 @@ def refresh_token_service(token):
     payload = verify_token(token=data_token["token"])
     user_id = int(payload["sub"])
     
-    user = get_user_by_id_utils(user_id=user_id)
+    try:
+        user = get_user_by_id(user_id=user_id)
+        if not user["is_active"]:
+            raise PermissionDenail()
+    except UserNotFoudError:
+        error(status_code=404,message="User not found")
+    except PermissionDenail:
+        error(status_code=403,message="User sudah dinonaktifkan")
     
     access_token = create_access_token(user_id=user["id"],email=user["email"],role=user["role"])
     refresh_token = create_refresh_token(user_id=user["id"])

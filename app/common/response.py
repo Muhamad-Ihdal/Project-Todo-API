@@ -8,7 +8,7 @@ def success(data=None,message='No message'):
     }
     
 def error(status_code=401,data=None,message='No message'):
-    return HTTPException(
+    raise HTTPException(
         status_code=status_code,
         detail={
             "success": False,

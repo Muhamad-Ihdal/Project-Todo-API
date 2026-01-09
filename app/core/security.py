@@ -1,0 +1,84 @@
+from passlib.context import CryptContext
+from jose import jwt,JWTError,ExpiredSignatureError
+from .config import SECRET_KEY,ALGORITHM,ACCESS_TOKEN_EXPIRED_IN_MINUTES,REFRESH_TOKEN_EXPIRED_IN_DAYS
+from datetime import datetime,timedelta,timezone
+from ..common.response import success,error
+import hashlib
+# from .. import common
+# ----------------------------------hash 
+
+
+
+
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto"
+)
+
+def _normalize_password(password: str) -> bytes:
+    return hashlib.sha256(password.encode("utf-8")).digest()
+
+def hash_password(password: str) -> str:
+    normalized = _normalize_password(password)
+    return pwd_context.hash(normalized)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    normalized = _normalize_password(plain_password)
+    return pwd_context.verify(normalized, hashed_password)
+
+
+
+
+
+
+
+
+
+
+
+
+
+# pwd_context = CryptContext(
+#     schemes=["bcrypt"],
+#     deprecated="auto"
+# )
+
+# def _normalize_password(password: str) -> bytes:
+#     return hashlib.sha256(password.encode("utf-8")).digest()
+
+# def hash_password(password:str) -> str:
+#     normalize = _normalize_password(password=password)
+#     return pwd_context.hash(normalize)
+
+# def verify_password(plain_password:str,hashed_password:str) -> bool:
+#     normalize = _normalize_password(password=plain_password)
+#     return pwd_context.verify(normalize,hashed_password)
+# ----------------------------------hash end
+
+    # digest = hashlib.sha256(password.encode("utf-8")).digest() # <------ ini konsep yang gw belum ngerti
+    # digest = hashlib.sha256(plain_password.encode("utf-8")).digest()
+# ------------------------------------ jwt
+def create_access_token(user_id:int,email,role):
+    payload = {
+        "sub":str(user_id),
+        "email":email,
+        "role":role,
+        "type":"access",
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=15)
+    }
+    return jwt.encode(payload,SECRET_KEY,algorithm=ALGORITHM)
+
+def create_refresh_token(user_id:int):
+    payload = {
+        "sub":str(user_id),
+        "type":"refresh",
+        "exp": datetime.now(timezone.utc) + timedelta(days=7)
+    }
+    return jwt.encode(payload,SECRET_KEY,algorithm=ALGORITHM)
+
+def verify_token(token:str):
+    try:
+        return jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
+    except JWTError:
+        error(status_code=401,message="token invalid")
+# ------------------------------------ jwt end 

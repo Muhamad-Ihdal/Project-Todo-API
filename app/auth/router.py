@@ -1,12 +1,13 @@
 from fastapi import APIRouter
-from schemas import RegisterRequest,LoginRequest,RefreshRequest,SuccessResponse
-from service import register_service,login_service,refresh_token_service,logout_service
+from .schemas import RegisterRequest,LoginRequest,RefreshRequest,SuccessResponse
+from .service import register_service,login_service,refresh_token_service,logout_service
 router = APIRouter()
 
 @router.post("/auth/register",response_model=SuccessResponse)
 def register(user : RegisterRequest):
     email = user.email
     password = user.password
+    # print(f"-----------------------------------------------{email}-{type(email)}----{password}--{type(password)}------------------")
     return register_service(email,password)
 
 @router.post("/auth/login",response_model=SuccessResponse)
