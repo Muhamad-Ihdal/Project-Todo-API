@@ -34,7 +34,7 @@ def login_service(email,password):
 
     access_token = create_access_token(user_id=user["id"],email=user["email"],role=user["role"])
     refresh_token = create_refresh_token(user_id=user["id"])
-    expierd_at = now() + timedelta(minutes=REFRESH_TOKEN_EXPIRED_IN_DAYS) #---------ini jangan lupa ubah ke days lagi ---------------------------------------
+    expierd_at = now() + timedelta(days=REFRESH_TOKEN_EXPIRED_IN_DAYS) #---------ini jangan lupa ubah ke days lagi ---------------------------------------
     try:
         add_refresh_token_db(owner_id=user["id"],token=refresh_token,expired_at=expierd_at)
     except DatabaseError:

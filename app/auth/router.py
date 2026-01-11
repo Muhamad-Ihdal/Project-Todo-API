@@ -21,5 +21,5 @@ def refresh_token(token : RefreshRequest):
 
 @router.post("/auth/logout",response_model=SuccessResponse)
 def logout(token : RefreshRequest):
-    return refresh_token_service(token.refresh_token)
+    return logout_service(token.refresh_token)
 
