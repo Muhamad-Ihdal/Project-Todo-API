@@ -3,7 +3,7 @@ from ..common.exception import UserNotFoudError,PermissionDenail,UniqueError,Dat
 import sqlite3
 
 # ----------------------------------------------------------------- user 
-def add_user_db(hashed_pwd,email,created_at):
+def add_user_db(hashed_pwd:str,email:str,created_at):
     conn = foreign_key_on()
     cursor = conn.cursor()
 
@@ -53,6 +53,34 @@ def get_user_by_email(email:str):
 
     conn.close()
     return dict(row)
+
+def change_role_db(user_id:int,role:str):
+    conn = foreign_key_on()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            UPDATE users
+            SET role = ?
+            WHERE id = ?""",
+            (role,user_id)
+        )
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise DatabaseError()
+    
+    affacted_row = cursor.rowcount
+    if not affacted_row:
+        conn.close()
+        raise UserNotFoudError()
+    
+    user = get_user_by_id(user_id=user_id)
+    
+    conn.commit()
+    conn.close()
+    return dict(user)
+
+
 # ----------------------------------------------------------------- user end
 
 # ----------------------------------------------------------------- refresh token
