@@ -7,7 +7,6 @@ router = APIRouter()
 def register(user : RegisterRequest):
     email = user.email
     password = user.password
-    # print(f"-----------------------------------------------{email}-{type(email)}----{password}--{type(password)}------------------")
     return register_service(email,password)
 
 @router.post("/auth/login",response_model=SuccessResponse)

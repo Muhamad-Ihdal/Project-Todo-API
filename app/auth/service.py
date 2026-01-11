@@ -4,6 +4,7 @@ from ..common.time import now
 from ..common.response import error,success
 from ..common.exception import UserNotFoudError,PermissionDenail,DatabaseError,UniqueError
 from datetime import datetime,timedelta,timezone
+from ..core.config import REFRESH_TOKEN_EXPIRED_IN_DAYS
 # from .utils import get_user_by_email_utils, get_user_by_id_utils
 # belajar init dan moduls duluuu woyyyy <----------------------------------|
 
@@ -33,7 +34,7 @@ def login_service(email,password):
 
     access_token = create_access_token(user_id=user["id"],email=user["email"],role=user["role"])
     refresh_token = create_refresh_token(user_id=user["id"])
-    expierd_at = now() + timedelta(days=7)
+    expierd_at = now() + timedelta(minutes=REFRESH_TOKEN_EXPIRED_IN_DAYS) #---------ini jangan lupa ubah ke days lagi ---------------------------------------
     try:
         add_refresh_token_db(owner_id=user["id"],token=refresh_token,expired_at=expierd_at)
     except DatabaseError:
@@ -54,10 +55,10 @@ def refresh_token_service(token):
         delete_refresh_token_db(data_token["token"])
         if data_token["revoked_at"]:
             raise PermissionDenail()
-    except FileNotFoundError:
-        error(status_code=404,message="Token tidak terdaftar")
     except PermissionDenail:
         error(status_code=401,message="Token telah di band")
+    except DatabaseError:
+        error(status_code=404,message="Token tidak terdaftar")
    
     expired_at = datetime.fromisoformat(data_token["expired_at"])
     if expired_at < datetime.now(timezone.utc):
@@ -83,7 +84,7 @@ def refresh_token_service(token):
     except DatabaseError:
         error(status_code=DatabaseError.status_code,message=DatabaseError.detail)
     
-    data_response,m = {
+    data_response = {
         "access_token":access_token,
         "refresh_token":refresh_token,
         "type":"Bearer"

@@ -65,10 +65,6 @@ def add_refresh_token_db(owner_id,token,expired_at):
         (owner_id,token,expired_at)
     )
 
-    affected_row = cursor.rowcount #---------------------------------ini masalah nih
-    if not affected_row: 
-        conn.close()
-        raise DatabaseError()
 
     conn.commit()
     conn.close()
@@ -97,7 +93,7 @@ def delete_refresh_token_db(token):
 
     cursor.execute(
         "DELETE FROM ref_token WHERE token = ?",
-        (token)
+        (token,)
     )
 
     conn.commit()
