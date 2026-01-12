@@ -9,9 +9,10 @@ from fastapi import Depends
 
 def check_and_get_user(user_id,permission_denail_massage = "Akses ditolak",database_error_message = "Database error"):
     try:
-        data_token = check_and_get_token_db(token=token)
-        if data_token["revoked_at"]:
-            raise PermissionDenail()
+        pass
+        # data_token = check_and_get_token_db(token=token)
+        # if data_token["revoked_at"]:
+            # raise PermissionDenail()
     except UserNotFoudError:
         error(status_code=UserNotFoudError.status_code,message=UserNotFoudError.detail)
     except PermissionDenail:

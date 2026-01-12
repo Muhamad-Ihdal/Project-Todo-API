@@ -51,12 +51,12 @@ def create_table_todo():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS todos (
             id INTEGER PRIMARY KEY,
-            title TEXT,
+            title TEXT NOT NULL,
             description TEXT,
             status TEXT NOT NULL DEFAULT 'pending',
             created_at TEXT NOT NULL,
             updated_at TEXT,
-            deleted_at TEXT DEFAULT null,
+            deleted_at TEXT DEFAULT NULL,
             owner_id INTEGER, 
             FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
             )""")

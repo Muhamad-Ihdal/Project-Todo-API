@@ -34,8 +34,11 @@ def get_user_by_id(user_id:int):
         conn.close()
         raise UserNotFoudError()
 
+    user = dict(row)
+    user["is_active"] = bool(user["is_active"])
+
     conn.close()
-    return dict(row)
+    return user
 
 
 def get_user_by_email(email:str):
@@ -51,8 +54,11 @@ def get_user_by_email(email:str):
         conn.close()
         raise UserNotFoudError()
 
+    user = dict(row)
+    user["is_active"] = bool(user["is_active"])
+
     conn.close()
-    return dict(row)
+    return user
 
 def change_role_db(user_id:int,role:str):
     conn = foreign_key_on()

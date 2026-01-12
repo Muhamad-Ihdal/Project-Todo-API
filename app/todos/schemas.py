@@ -1,9 +1,5 @@
 from pydantic import BaseModel,EmailStr
 
-class IdRequest(BaseModel):
-    id:int
-
-
 
 class UserResponse(BaseModel):
     id:int
