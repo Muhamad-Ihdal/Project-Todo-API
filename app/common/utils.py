@@ -2,14 +2,16 @@ from ..common.exception import *
 from ..common.response import *
 
 
+from fastapi import Depends
 
 
 
-def check_and_get_user(user_id,fungsi,permission_denail_massage = "Akses ditolak",database_error_message = "Database error"):
+
+def check_and_get_user(user_id,permission_denail_massage = "Akses ditolak",database_error_message = "Database error"):
     try:
-        user = fungsi()
-        # if not user["is_active"]:
-            # raise PermissionDenail()
+        data_token = check_and_get_token_db(token=token)
+        if data_token["revoked_at"]:
+            raise PermissionDenail()
     except UserNotFoudError:
         error(status_code=UserNotFoudError.status_code,message=UserNotFoudError.detail)
     except PermissionDenail:

@@ -1,6 +1,6 @@
 from pydantic import BaseModel,EmailStr
 
-class ToAdminRequest(BaseModel):
+class IdRequest(BaseModel):
     id:int
 
 class UserResponse(BaseModel):

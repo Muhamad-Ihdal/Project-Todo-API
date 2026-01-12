@@ -81,6 +81,33 @@ def change_role_db(user_id:int,role:str):
     return dict(user)
 
 
+def update_is_active_db(user_id:int,is_active:int):
+    conn = foreign_key_on()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            UPDATE users
+            SET is_active = ?
+            WHERE id = ?""",
+            (is_active,user_id)
+        )
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise DatabaseError()
+    
+    affacted_row = cursor.rowcount
+    if not affacted_row:
+        conn.close()
+        raise UserNotFoudError()
+    
+    user = get_user_by_id(user_id=user_id)
+    
+    conn.commit()
+    conn.close()
+    return dict(user)
+
+
 # ----------------------------------------------------------------- user end
 
 # ----------------------------------------------------------------- refresh token
