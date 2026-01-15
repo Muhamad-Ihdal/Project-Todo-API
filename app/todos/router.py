@@ -1,8 +1,7 @@
 from fastapi import APIRouter,Depends
 from .schemas import SuccessTodoResponse,SuccessTodosResponse,CreateTodoRequest
 from ..core.dependencies import get_current_user,require_role
-from .service import create_todo_service
-from .service import get_todos_service
+from .service import create_todo_service,get_todos_service,get_todo_by_id_service
 router = APIRouter()
 
 @router.post("todos/",response_model=SuccessTodoResponse)
@@ -12,3 +11,7 @@ def create_todo(spec:CreateTodoRequest,user = Depends(get_current_user)):
 @router.get("todos/",response_model=SuccessTodosResponse)
 def get_todos(user = Depends(get_current_user)):
     return get_todos_service(user)
+
+@router.get("todos/{id}",response_model=SuccessTodoResponse)
+def get_todo_by_id_router(id:int,user = Depends(get_current_user)):
+    return get_todo_by_id_service(id,user)

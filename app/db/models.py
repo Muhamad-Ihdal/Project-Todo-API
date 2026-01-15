@@ -203,6 +203,24 @@ def get_todo_by_title_db(title):
     conn.close()
     return dict(row)
 
+def get_todo_by_id_db(id):
+
+    conn = foreign_key_on()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM todos WHERE id = ? AND delete_at = null",
+        (id,)
+    )
+
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise DatabaseError()
+
+    conn.close()
+    return dict(row)
+
 
 def get_todos_db(owner_id):
     conn = foreign_key_on()
