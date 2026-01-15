@@ -161,3 +161,48 @@ def delete_refresh_token_db(token):
     conn.close()
 
 # ----------------------------------------------------------------- refresh token end
+
+# ----------------------------------------------------------------- todo
+
+def create_todo_db(owner_id,title,description,created_at):
+
+    conn = foreign_key_on()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO todos (owner_id,title,descroption,created_at) VALUES (?,?,?,?)",
+        (owner_id,title,description,created_at)
+    )
+    row = cursor.rowcount
+    if not row:
+        conn.close()
+        raise UserNotFoudError()
+    
+    todo = get_todo_by_title_db(title)
+
+    conn.commit()
+    conn.close()
+    return todo
+
+
+def get_todo_by_title_db(title):
+
+    conn = foreign_key_on()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT * FROM todos WHERE id = ?",
+        (title,)
+    )
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise DatabaseError()
+    
+    conn.close()
+    return dict(row)
+
+
+
+
+# ----------------------------------------------------------------- todo end

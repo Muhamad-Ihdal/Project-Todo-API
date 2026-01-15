@@ -12,4 +12,8 @@ class UserResponse(BaseModel):
 class SuccessResponse(BaseModel):
     success: bool
     message:str
-    data: dict | UserResponse
+    data: UserResponse
+
+class CreateTodoRequest(BaseModel):
+    title:str
+    description:str

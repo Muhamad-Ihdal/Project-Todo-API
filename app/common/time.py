@@ -3,6 +3,9 @@ from datetime import datetime,timezone,timedelta
 def now():
     return datetime.now(timezone.utc)
 
+def str_to_datetime(time:str):
+    return datetime.fromisoformat(time)
+
 # def now_for_SQLite():
     # return int(datetime.now(timezone.utc).timestamp())
 
