@@ -191,18 +191,35 @@ def get_todo_by_title_db(title):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM todos WHERE id = ?",
+        "SELECT * FROM todos WHERE title = ? AND delete_at = null",
         (title,)
     )
+
     row = cursor.fetchone()
     if not row:
         conn.close()
         raise DatabaseError()
-    
+
     conn.close()
     return dict(row)
 
 
+def get_todos_db(owner_id):
+    conn = foreign_key_on()
+    cursor = conn.cursor()
 
+    cursor.execute(
+        "SELECT * FROM todos WHERE owner_id = ? AND delete_at = null",
+        (owner_id,)
+    )
+    
+    rows = cursor.fetchall()
+    if not rows:
+        conn.close()
+        raise DatabaseError()
 
+    rows = [dict(row) for row in rows]
+
+    conn.close()
+    return rows
 # ----------------------------------------------------------------- todo end
