@@ -241,16 +241,19 @@ def get_todos_db(owner_id):
     conn.close()
     return rows
 
-def edit_todo_db(title,description,status,updated_at):
+def edit_todo_db(title,description,status,updated_at,todo_id):
     conn = foreign_key_on()
     cursor = conn.cursor()
 
     try:
         cursor.execute("""
             UPDATE todos
-            SET title = ?
+            SET title = ?,
+                description = ?,
+                status  = ?,
+                updated_at  = ?
             WHERE id = ?""",
-            (title,description,status,updated_at)
+            (title,description,status,updated_at,todo_id)
         )
     except sqlite3.IntegrityError:
         conn.close()
@@ -266,5 +269,32 @@ def edit_todo_db(title,description,status,updated_at):
     conn.commit()
     conn.close()
     return dict(user)
+
+def delete_todo_db(deleted_at,todo_id):
+    conn = foreign_key_on()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            UPDATE todos
+            SET deleted_at = ?
+            WHERE id = ?""",
+            (deleted_at,todo_id)
+        )
+
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise DatabaseError()
+    
+    affacted_row = cursor.rowcount
+    if not affacted_row:
+        conn.close()
+        raise DatabaseError("todo tidak ditemukan")
+    
+    row = get_todo_by_id_db(id=todo_id)
+    
+    conn.commit()
+    conn.close()
+    return dict(row)
 
 # ----------------------------------------------------------------- todo end

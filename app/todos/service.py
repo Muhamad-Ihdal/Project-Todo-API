@@ -1,5 +1,5 @@
 from ..common.time import now,str_to_datetime
-from ..db.models import edit_todo_db,get_todo_by_id_db,create_todo_db,get_todo_by_title_db,get_user_by_id,get_todos_db
+from ..db.models import delete_todo_db,edit_todo_db,get_todo_by_id_db,create_todo_db,get_todo_by_title_db,get_user_by_id,get_todos_db
 from ..common.exception import *
 from ..common.response import *
 from ..common.utils import normalize
@@ -55,7 +55,7 @@ def edit_todo_service(edit:object,todo_id:int,user:dict):
             case "archived": status = "archived"
             case _ : status = todo["status"] 
 
-        edited_todo = edit_todo_db(title=edit.title,description=edit.description,status=status,updated_at=updated_at)
+        edited_todo = edit_todo_db(title=edit.title,description=edit.description,status=status,updated_at=updated_at,todo_id=todo_id)
 
     except DatabaseError:
         error(status_code=DatabaseError.status_code,message=DatabaseError.detail)
@@ -67,6 +67,23 @@ def edit_todo_service(edit:object,todo_id:int,user:dict):
     return success(data=edited_todo,message="Update berhasil.")
 
 
+def delete_todo_service(todo_id:int,user:dict):
+    try:
+        todo = get_todo_by_id_db(id=todo_id)
+        owner = get_user_by_id(user_id=todo["owner_id"])
+        if user["id"] != todo["owner_id"] and user["role"] != "admin":
+            raise PermissionDenail()
+        deleted_at = now()
+        delete_todo_db(deleted_at=deleted_at,todo_id=todo_id)
+
+    except DatabaseError:
+        error(status_code=DatabaseError.status_code,message=DatabaseError.detail)
+    except UserNotFoudError:
+        error(status_code=UserNotFoudError.status_code,message=UserNotFoudError.detail)
+    except PermissionDenail:
+        error(status_code=PermissionDenail.status_code,message=PermissionDenail.detail)
+    
+    return success(data=None,message="todo berhasil dihapus")
 
 
     
