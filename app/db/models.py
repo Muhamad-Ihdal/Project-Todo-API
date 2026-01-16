@@ -1,5 +1,5 @@
 from .sesion import foreign_key_on
-from ..common.exception import UserNotFoudError,PermissionDenail,UniqueError,DatabaseError
+from ..common.exception import *
 import sqlite3
 
 # ----------------------------------------------------------------- user 
@@ -234,10 +234,37 @@ def get_todos_db(owner_id):
     rows = cursor.fetchall()
     if not rows:
         conn.close()
-        raise DatabaseError()
+        return rows
 
     rows = [dict(row) for row in rows]
 
     conn.close()
     return rows
+
+def edit_todo_db(title,description,status,updated_at):
+    conn = foreign_key_on()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            UPDATE todos
+            SET title = ?
+            WHERE id = ?""",
+            (title,description,status,updated_at)
+        )
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise DatabaseError()
+    
+    affacted_row = cursor.rowcount
+    if not affacted_row:
+        conn.close()
+        raise DatabaseError(detail="todo tidak ditemukan")
+    
+    user = get_todo_by_title_db(title=title)
+    
+    conn.commit()
+    conn.close()
+    return dict(user)
+
 # ----------------------------------------------------------------- todo end

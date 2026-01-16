@@ -12,6 +12,7 @@ class UserNotFoudError(AppError):
     status_code = 404
     detail = "User tidak di temukan"
 
+
 # class FileNotFoundError(AppError):
 #     status_code = 404
 #     detail = "User tidak di temukan"

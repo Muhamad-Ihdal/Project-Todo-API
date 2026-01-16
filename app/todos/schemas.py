@@ -1,6 +1,12 @@
 from pydantic import BaseModel,EmailStr
 
 
+class EditTodoRequest(BaseModel):
+    title:str
+    description:str
+    status:str
+
+
 class TodoResponse(BaseModel):
     id :int 
     owner_id : int 
@@ -10,7 +16,6 @@ class TodoResponse(BaseModel):
     created_at : any
     deleted_at : any
     update_at : any
-
 
 class UserWithTodoResponse(BaseModel):
     id:int

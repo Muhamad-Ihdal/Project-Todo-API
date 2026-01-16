@@ -19,3 +19,6 @@ def check_and_get_user(user_id,permission_denail_massage = "Akses ditolak",datab
         error(status_code=PermissionDenail.status_code,message=permission_denail_massage)
     except DatabaseError:
         error(status_code=404,message=database_error_message)
+
+def normalize(x:str):
+    return x.srtip().lower().replace(" ","")
