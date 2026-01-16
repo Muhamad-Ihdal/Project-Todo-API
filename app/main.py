@@ -4,7 +4,6 @@ from .auth.router import router
 # create_table_users()
 # create_table_todo()
 # create_table_refresh_token()
-# delete_table()
 
 app = FastAPI()
 
